@@ -36,27 +36,59 @@ function get(request, response) {
 };
 
 function post(request, response) {
+	var username = request.body.username
+	var useremail  = request.body.useremail
+	console.log("username entered " + username)
+	console.log("useremail entered " + useremail)
 	// TODO: read 'name and email from the request.body'
-	// var newSessionId = login.login('xxx', 'xxx@gmail.com');
+	 var newSessionId = login.login(username, useremail);
+	 var cookies = request.cookies;
+	console.log("new session cookie " + newSessionId);
+	 console.log(cookies);
+	response.setHeader('Set-Cookie', 'session_id=' + newSessionId);
+
 	// TODO: set new session id to the 'session_id' cookie in the response
 	// replace "Logged In" response with response.end(login.hello(newSessionId));
 
-	response.end("Logged In\n");
+	response.end(login.hello(newSessionId));
+
 };
 
 function del(request, response) {
 	console.log("DELETE:: Logout from the server");
+	var cookies = request.cookies;
+	if ('session_id' in cookies) {	
+	var sid = cookies['session_id'];
+	login.logout(sid);
+	response.setHeader('DELETE-Cookie', 'session_id=' + sid);
  	// TODO: remove session id via login.logout(xxx)
  	// No need to set session id in the response cookies since you just logged out!
 
   	response.end('Logged out from the server\n');
+	}else 
+	{
+	response.end('no session found');
+	}
 };
 
 function put(request, response) {
 	console.log("PUT:: Re-generate new seesion_id for the same user");
 	// TODO: refresh session id; similar to the post() function
+var username = request.body.username
+	var useremail  = request.body.useremail
+	console.log("username entered " + username)
+	console.log("useremail entered " + useremail)
+	// TODO: read 'name and email from the request.body'
+	 var newSessionId = login.login(username, useremail);
+	 var cookies = request.cookies;
+	console.log("new session cookie " + newSessionId);
+	 console.log(cookies);
+	response.setHeader('Set-Cookie', 'session_id=' + newSessionId);
 
-	response.end("Re-freshed session id\n");
+	// TODO: set new session id to the 'session_id' cookie in the response
+	// replace "Logged In" response with response.end(login.hello(newSessionId));
+
+	response.end("Re-freshed session id\n" +login.hello(newSessionId));
 };
 
 app.listen(8000);
