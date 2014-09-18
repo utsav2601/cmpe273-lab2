@@ -36,8 +36,8 @@ function get(request, response) {
 };
 
 function post(request, response) {
-	var username = request.body.username
-	var useremail  = request.body.useremail
+	var username = request.body.name
+	var useremail  = request.body.email
 	console.log("username entered " + username)
 	console.log("useremail entered " + useremail)
 	// TODO: read 'name and email from the request.body'
@@ -73,23 +73,21 @@ function del(request, response) {
 
 function put(request, response) {
 	console.log("PUT:: Re-generate new seesion_id for the same user");
+
 	// TODO: refresh session id; similar to the post() function
-var username = request.body.username
-	var useremail  = request.body.useremail
-	console.log("username entered " + username)
-	console.log("useremail entered " + useremail)
-	// TODO: read 'name and email from the request.body'
-	 var newSessionId = login.login(username, useremail);
-	 var cookies = request.cookies;
-	console.log("new session cookie " + newSessionId);
-	 console.log(cookies);
-	response.setHeader('Set-Cookie', 'session_id=' + newSessionId);
+	var cookies = request.cookies;
+	console.log(cookies);
+	if ('session_id' in cookies) {
+		var sid = cookies['session_id'];
+		console.log("Session ID: " +sid);
+		if ( login.isLoggedIn(sid) ) {
+			console.log("Logged in with session ID: " +sid);
+			login.refresh(sid);
+		}
+	}
 
-	// TODO: set new session id to the 'session_id' cookie in the response
-	// replace "Logged In" response with response.end(login.hello(newSessionId));
-
-	response.end("Re-freshed session id\n" +login.hello(newSessionId));
-};
+	response.end("Re-freshed session id\n");
+	};
 
 app.listen(8000);
 
